@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import org.apache.commons.logging.LogFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import be.maximvdw.mvdwupdater.config.Configuration;
@@ -23,6 +24,7 @@ import be.maximvdw.spigotsite.api.SpigotSiteAPI;
 import be.maximvdw.spigotsite.api.exceptions.ConnectionFailedException;
 import be.maximvdw.spigotsite.api.resource.Resource;
 import be.maximvdw.spigotsite.api.resource.ResourceManager;
+import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserManager;
 import be.maximvdw.spigotsite.api.user.exceptions.InvalidCredentialsException;
 import be.maximvdw.spigotsite.user.SpigotUser;
@@ -73,6 +75,16 @@ public class MVdWUpdater extends JavaPlugin {
 		}
 	}
 
+	public void updatePlugin(Plugin plugin, int resourceId, UpdateMethod method, User user) {
+//		List<Resource> premiums = getPurchasedResources(user);
+//		for (Resource premium : premiums) {
+//			if (premium.getResourceId() == resourceId) {
+//
+//			}
+//		}
+		
+	}
+
 	/**
 	 * Authenticate spigot user
 	 * 
@@ -98,7 +110,7 @@ public class MVdWUpdater extends JavaPlugin {
 	 * @return List of premium resources
 	 * @throws ConnectionFailedException
 	 */
-	public List<Resource> getPurchasedResources(SpigotUser user) throws ConnectionFailedException {
+	public List<Resource> getPurchasedResources(User user) throws ConnectionFailedException {
 		ResourceManager resourceManager = api.getResourceManager();
 		return resourceManager.getPurchasedResources(user);
 	}
