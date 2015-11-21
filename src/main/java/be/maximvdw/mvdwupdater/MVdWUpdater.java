@@ -81,16 +81,23 @@ public class MVdWUpdater extends JavaPlugin {
 		}
 	}
 
-	public void updatePlugin(Plugin plugin, int resourceId, UpdateMethod method, User user) throws ConnectionFailedException, UnknownDependencyException, InvalidPluginException, InvalidDescriptionException {
+	public void updatePlugin(Plugin plugin, int resourceId, UpdateMethod method, User user)
+			throws ConnectionFailedException, UnknownDependencyException, InvalidPluginException,
+			InvalidDescriptionException {
 		List<Resource> premiums = getPurchasedResources(user);
 		for (Resource premium : premiums) {
 			if (premium.getResourceId() == resourceId) {
 				// Resource id found
 				SendConsole.info("Checking for new updates for: " + plugin.getName() + " ...");
-				
-				if (isUpdateAvailable(plugin, resourceId)){
+
+				if (isUpdateAvailable(plugin, resourceId)) {
 					SendConsole.info("An update for '" + plugin.getName() + "' is available");
-					switch (method){
+
+					SendConsole.info("Getting download link ...");
+					Resource premiumResource = getSpigotSiteAPI().getResourceManager()
+							.getResourceById(premium.getResourceId());
+
+					switch (method) {
 					case INSTALL_ON_RESTART:
 						// Download the plugin to the update folder
 						break;
@@ -100,30 +107,30 @@ public class MVdWUpdater extends JavaPlugin {
 						Bukkit.getPluginManager().disablePlugin(plugin);
 						File pluginFile = null;
 						try {
-							pluginFile = new File(URLDecoder.decode(this.getClass()
-									.getProtectionDomain().getCodeSource().getLocation()
-									.getPath(), "UTF-8"));
+							pluginFile = new File(URLDecoder.decode(
+									plugin.getClass().getProtectionDomain().getCodeSource().getLocation().getPath(),
+									"UTF-8"));
 						} catch (UnsupportedEncodingException e) {
-							
+
 						}
-						
-						if (pluginFile != null){
+
+						if (pluginFile != null) {
 							SendConsole.info("Deleting '" + pluginFile.getName() + "' ...");
 							pluginFile.delete();
-							
+
 							SendConsole.info("Downloading '" + plugin.getName() + "' ...");
-							premium.downloadResource(user,pluginFile);
-							
+							premiumResource.downloadResource(user, pluginFile);
+
 							SendConsole.info("Loading '" + plugin.getName() + "' ...");
 							Bukkit.getPluginManager().loadPlugin(pluginFile);
 						}
 						break;
 					}
 				}
-				
+
 				break;
 			}
-		}		
+		}
 	}
 
 	/**
@@ -301,16 +308,19 @@ public class MVdWUpdater extends JavaPlugin {
 	public Version getResourceVersion(int resourceId) {
 		return new Version(getResourceVersionString(resourceId));
 	}
-	
+
 	/**
 	 * Get if there is a new update available
-	 * @param plugin Plugin to update
-	 * @param resourceId Spigot Resource ID
+	 * 
+	 * @param plugin
+	 *            Plugin to update
+	 * @param resourceId
+	 *            Spigot Resource ID
 	 * @return Boolean update available
 	 */
-	public boolean isUpdateAvailable(Plugin plugin, int resourceId){
-		Version pluginVersion  = new Version(plugin.getDescription().getVersion());
-		if (pluginVersion.compare(getResourceVersion(resourceId)) == 1){
+	public boolean isUpdateAvailable(Plugin plugin, int resourceId) {
+		Version pluginVersion = new Version(plugin.getDescription().getVersion());
+		if (pluginVersion.compare(getResourceVersion(resourceId)) == 1) {
 			return true;
 		}
 		return false;
