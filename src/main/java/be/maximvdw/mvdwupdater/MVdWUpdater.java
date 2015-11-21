@@ -1,9 +1,12 @@
 package be.maximvdw.mvdwupdater;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +15,10 @@ import java.util.logging.Level;
 import org.apache.commons.logging.LogFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.plugin.InvalidDescriptionException;
+import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.UnknownDependencyException;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import be.maximvdw.mvdwupdater.config.Configuration;
@@ -75,14 +81,49 @@ public class MVdWUpdater extends JavaPlugin {
 		}
 	}
 
-	public void updatePlugin(Plugin plugin, int resourceId, UpdateMethod method, User user) {
-//		List<Resource> premiums = getPurchasedResources(user);
-//		for (Resource premium : premiums) {
-//			if (premium.getResourceId() == resourceId) {
-//
-//			}
-//		}
-		
+	public void updatePlugin(Plugin plugin, int resourceId, UpdateMethod method, User user) throws ConnectionFailedException, UnknownDependencyException, InvalidPluginException, InvalidDescriptionException {
+		List<Resource> premiums = getPurchasedResources(user);
+		for (Resource premium : premiums) {
+			if (premium.getResourceId() == resourceId) {
+				// Resource id found
+				SendConsole.info("Checking for new updates for: " + plugin.getName() + " ...");
+				
+				if (isUpdateAvailable(plugin, resourceId)){
+					SendConsole.info("An update for '" + plugin.getName() + "' is available");
+					switch (method){
+					case INSTALL_ON_RESTART:
+						// Download the plugin to the update folder
+						break;
+					case DOWNLOAD_AND_INSTALL:
+						// Remove the plugin
+						SendConsole.info("Disabling '" + plugin.getName() + "' ...");
+						Bukkit.getPluginManager().disablePlugin(plugin);
+						File pluginFile = null;
+						try {
+							pluginFile = new File(URLDecoder.decode(this.getClass()
+									.getProtectionDomain().getCodeSource().getLocation()
+									.getPath(), "UTF-8"));
+						} catch (UnsupportedEncodingException e) {
+							
+						}
+						
+						if (pluginFile != null){
+							SendConsole.info("Deleting '" + pluginFile.getName() + "' ...");
+							pluginFile.delete();
+							
+							SendConsole.info("Downloading '" + plugin.getName() + "' ...");
+							premium.downloadResource(user,pluginFile);
+							
+							SendConsole.info("Loading '" + plugin.getName() + "' ...");
+							Bukkit.getPluginManager().loadPlugin(pluginFile);
+						}
+						break;
+					}
+				}
+				
+				break;
+			}
+		}		
 	}
 
 	/**
@@ -259,5 +300,19 @@ public class MVdWUpdater extends JavaPlugin {
 	 */
 	public Version getResourceVersion(int resourceId) {
 		return new Version(getResourceVersionString(resourceId));
+	}
+	
+	/**
+	 * Get if there is a new update available
+	 * @param plugin Plugin to update
+	 * @param resourceId Spigot Resource ID
+	 * @return Boolean update available
+	 */
+	public boolean isUpdateAvailable(Plugin plugin, int resourceId){
+		Version pluginVersion  = new Version(plugin.getDescription().getVersion());
+		if (pluginVersion.compare(getResourceVersion(resourceId)) == 1){
+			return true;
+		}
+		return false;
 	}
 }
