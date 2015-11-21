@@ -100,12 +100,34 @@ public class MVdWUpdater extends JavaPlugin {
 					switch (method) {
 					case INSTALL_ON_RESTART:
 						// Download the plugin to the update folder
+						File pluginFile = null;
+						try {
+							pluginFile = new File(URLDecoder.decode(
+									plugin.getClass().getProtectionDomain().getCodeSource().getLocation().getPath(),
+									"UTF-8"));
+						} catch (UnsupportedEncodingException e) {
+
+						}
+						
+						File outputFile = null;
+						try{
+							outputFile = new File(Bukkit.getUpdateFolder() + "/" + pluginFile.getName());
+						}catch (Exception ex){
+							
+						}
+
+						if (pluginFile != null && outputFile != null) {
+							SendConsole.info("Downloading '" + plugin.getName() + "' ...");
+							premiumResource.downloadResource(user, outputFile);
+
+							SendConsole.info("An new update for " + plugin.getName() + " is ready to be installed on next restart!");
+						}
 						break;
 					case DOWNLOAD_AND_INSTALL:
 						// Remove the plugin
 						SendConsole.info("Disabling '" + plugin.getName() + "' ...");
 						Bukkit.getPluginManager().disablePlugin(plugin);
-						File pluginFile = null;
+						pluginFile = null;
 						try {
 							pluginFile = new File(URLDecoder.decode(
 									plugin.getClass().getProtectionDomain().getCodeSource().getLocation().getPath(),
