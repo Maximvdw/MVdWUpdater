@@ -95,7 +95,7 @@ public class MVdWUpdater extends JavaPlugin {
 
 					SendConsole.info("Getting download link ...");
 					Resource premiumResource = getSpigotSiteAPI().getResourceManager()
-							.getResourceById(premium.getResourceId());
+							.getResourceById(premium.getResourceId(),getSpigotUser());
 
 					switch (method) {
 					case INSTALL_ON_RESTART:
@@ -256,12 +256,11 @@ public class MVdWUpdater extends JavaPlugin {
 
 		try {
 			UserManager userManager = api.getUserManager();
-			if (!username.equals("") && !password.equals("")) {
+			if (!password.equals("")) {
 				SendConsole.info("Logging in with: " + username);
 				user = (SpigotUser) userManager.authenticate(username, password);
 				SendConsole.info("Succesfully logged in! ID=" + user.getUserId());
 				SendConsole.info("Removing password from credentials.yml ...");
-				credentialStorage.getConfig().set("username", "");
 				credentialStorage.getConfig().set("password", "");
 				credentialStorage.getConfig().set("cookies", user.getCookies());
 				credentialStorage.getConfig().save(credentialStorage.getConfigFile());
