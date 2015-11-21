@@ -81,6 +81,17 @@ public class MVdWUpdater extends JavaPlugin {
 		}
 	}
 
+	/**
+	 * Update the plugin
+	 * @param plugin Plugin to update
+	 * @param resourceId Spigot Resource id
+	 * @param method Update Method
+	 * @param user Spigot user
+	 * @throws ConnectionFailedException Thrown when the connection failed
+	 * @throws UnknownDependencyException Unknown dependecy found
+	 * @throws InvalidPluginException Plugin not valid
+	 * @throws InvalidDescriptionException Plugin description not valid
+	 */
 	public void updatePlugin(Plugin plugin, int resourceId, UpdateMethod method, User user)
 			throws ConnectionFailedException, UnknownDependencyException, InvalidPluginException,
 			InvalidDescriptionException {
