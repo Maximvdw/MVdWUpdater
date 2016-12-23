@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import be.maximvdw.spigotsite.api.user.exceptions.TwoFactorAuthenticationException;
 import org.apache.commons.logging.LogFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -166,6 +167,23 @@ public class MVdWUpdater extends JavaPlugin {
 		}
 	}
 
+    /**
+     * Authenticate spigot user
+     *
+     * @param username
+     *            Username
+     * @param password
+     *            Password
+     * @return SpigotUser
+     * @throws InvalidCredentialsException
+     *             Username or Password do not match
+     */
+    public SpigotUser authenticate(String username, String password) throws InvalidCredentialsException, TwoFactorAuthenticationException {
+        UserManager userManager = api.getUserManager();
+        SpigotUser user = (SpigotUser) userManager.authenticate(username, password);
+        return user;
+    }
+
 	/**
 	 * Authenticate spigot user
 	 * 
@@ -173,13 +191,16 @@ public class MVdWUpdater extends JavaPlugin {
 	 *            Username
 	 * @param password
 	 *            Password
+	 * @param totpSecret
+	 * 			  TOTP Secret
 	 * @return SpigotUser
 	 * @throws InvalidCredentialsException
 	 *             Username or Password do not match
 	 */
-	public SpigotUser authenticate(String username, String password) throws InvalidCredentialsException {
+	public SpigotUser authenticate(String username, String password, String totpSecret) throws InvalidCredentialsException, TwoFactorAuthenticationException {
 		UserManager userManager = api.getUserManager();
-		SpigotUser user = (SpigotUser) userManager.authenticate(username, password);
+        if (totpSecret.equals("")) { totpSecret = null; }
+		SpigotUser user = (SpigotUser) userManager.authenticate(username, password,totpSecret);
 		return user;
 	}
 
@@ -268,12 +289,11 @@ public class MVdWUpdater extends JavaPlugin {
 		yamlBuilder.addPart("#   Enter your SpigotMC.org credentials in");
 		yamlBuilder.addPart("#   this yaml file and restart the plugin");
 		yamlBuilder.addPart("#   The plugin will log you in and store");
-		yamlBuilder.addPart("#   the session cookies. Your password you");
-		yamlBuilder.addPart("#   entered in this config will be removed.");
+		yamlBuilder.addPart("#   the session cookies.");
 		yamlBuilder.addPart("# ---------------------------------------- #");
 		yamlBuilder.addEmptyPart();
 		yamlBuilder.addPart(" DO NOT EDIT THE CONFIG VERSION!");
-		yamlBuilder.addPart("config", 1);
+		yamlBuilder.addPart("config", 2);
 		yamlBuilder.addEmptyPart();
 		yamlBuilder.addEmptyPart();
 		yamlBuilder.addPart(" Enter your SpigotMC.org username");
@@ -281,23 +301,27 @@ public class MVdWUpdater extends JavaPlugin {
 		yamlBuilder.addEmptyPart();
 		yamlBuilder.addPart(" Enter the corresponding password");
 		yamlBuilder.addPart("password", "");
+        yamlBuilder.addEmptyPart();
+        yamlBuilder.addPart(" Enter the 2FA Secret if you have 2FA enabled");
+        yamlBuilder.addPart(" See plugin page for more info");
+        yamlBuilder.addPart("2fasecret", "");
 
-		YamlStorage credentialStorage = new YamlStorage(this, "", "credentials", 1, yamlBuilder);
+
+        YamlStorage credentialStorage = new YamlStorage(this, "", "credentials", 2, yamlBuilder);
 		String username = credentialStorage.getConfig().getString("username");
 		String password = credentialStorage.getConfig().getString("password");
+        String totpSecret = credentialStorage.getConfig().getString("2fasecret");
 		Object cookiesObj = credentialStorage.getConfig().get("cookies");
 
 		try {
-			UserManager userManager = api.getUserManager();
 			if (!password.equals("")) {
 				SendConsole.info("Logging in with: " + username);
-				user = (SpigotUser) userManager.authenticate(username, password);
+				user = authenticate(username, password,totpSecret);
 				SendConsole.info("Succesfully logged in! ID=" + user.getUserId());
-				SendConsole.info("Removing password from credentials.yml ...");
-				credentialStorage.getConfig().set("password", "");
+				SendConsole.info("Adding cookies to credentials.yml ...");
 				credentialStorage.getConfig().set("cookies", user.getCookies());
 				credentialStorage.getConfig().save(credentialStorage.getConfigFile());
-				SendConsole.info("Cleaned the credentials.yml file!");
+				SendConsole.info("Saved the credentials.yml file!");
 
 			} else {
 				if (cookiesObj != null) {
@@ -309,7 +333,7 @@ public class MVdWUpdater extends JavaPlugin {
 					}
 					if (cookies.size() > 0) {
 						user = new SpigotUser(username);
-						((SpigotUser) user).setCookies(cookies);
+						user.setCookies(cookies);
 					}
 				}
 			}
