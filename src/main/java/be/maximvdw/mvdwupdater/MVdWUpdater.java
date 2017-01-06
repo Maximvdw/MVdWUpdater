@@ -130,6 +130,9 @@ public class MVdWUpdater extends JavaPlugin {
 						
 						File outputFile = null;
 						try{
+						    if (!Bukkit.getUpdateFolderFile().exists()){
+                                Bukkit.getUpdateFolderFile().mkdirs();
+                            }
 							outputFile = new File(Bukkit.getUpdateFolderFile(), pluginFile.getName());
 						}catch (Exception ex){
 							
