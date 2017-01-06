@@ -7,11 +7,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import be.maximvdw.mvdwupdater.utils.LibDownloader;
 import be.maximvdw.spigotsite.api.user.exceptions.TwoFactorAuthenticationException;
 import org.apache.commons.logging.LogFactory;
 import org.bukkit.Bukkit;
@@ -43,12 +45,14 @@ public class MVdWUpdater extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		new SendConsole(this);
-		// MOTD
+
 		SendConsole.info("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
 		SendConsole.info("Plugin: " + this.getName() + " v" + this.getDescription().getVersion());
 		SendConsole.info("Author: Maximvdw");
 		SendConsole.info("Site: http://www.mvdw-software.com/");
 		SendConsole.info("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+
+		LibDownloader.downloadLib(LibDownloader.Library.HTMMLUNIT);
 
 		SendConsole.info("Turning off HTMLUnit logging ...");
 		try {
@@ -96,6 +100,9 @@ public class MVdWUpdater extends JavaPlugin {
 	public void updatePlugin(Plugin plugin, int resourceId, UpdateMethod method, User user)
 			throws ConnectionFailedException, UnknownDependencyException, InvalidPluginException,
 			InvalidDescriptionException {
+	    if (getSpigotUser() == null){
+	        return;
+        }
 		List<Resource> premiums = getPurchasedResources(user);
 		for (Resource premium : premiums) {
 			if (premium.getResourceId() == resourceId) {
@@ -213,6 +220,9 @@ public class MVdWUpdater extends JavaPlugin {
 	 * @throws ConnectionFailedException
 	 */
 	public List<Resource> getPurchasedResources(User user) throws ConnectionFailedException {
+        if (getSpigotUser() == null){
+            new ArrayList<Resource>();
+        }
 		ResourceManager resourceManager = api.getResourceManager();
 		return resourceManager.getPurchasedResources(user);
 	}
@@ -228,6 +238,9 @@ public class MVdWUpdater extends JavaPlugin {
 	 * @throws ConnectionFailedException
 	 */
 	public boolean hasBought(SpigotUser user, int resourceId) throws ConnectionFailedException {
+        if (getSpigotUser() == null){
+            return false;
+        }
 		for (Resource resource : getPurchasedResources(user)) {
 			if (resource.getResourceId() == resourceId)
 				return true;

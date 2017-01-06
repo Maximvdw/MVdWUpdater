@@ -107,10 +107,6 @@
 									<pattern>be.maximvdw.spigotsite</pattern>
 									<shadedPattern>be.maximvdw.mvdwupdater.spigotsite</shadedPattern>
 								</relocation>
-								<relocation>
-									<pattern>com.gargoylesoftware.htmlunit</pattern>
-									<shadedPattern>be.maximvdw.mvdwupdater.htmlunit</shadedPattern>
-								</relocation>
 							</relocations>
 						</configuration>
 					</execution>
