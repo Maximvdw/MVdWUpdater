@@ -37,6 +37,7 @@
 			<artifactId>HTMLUnit</artifactId>
 			<version>2.15</version>
 			<classifier>OSGi</classifier>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 	<build>
@@ -89,7 +90,6 @@
 								<includes>
 									<include>be.maximvdw:spigotsite-api</include>
 									<include>be.maximvdw:spigotsite</include>
-									<include>com.gargoylesoftware:HTMLUnit</include>					
 								</includes>
 							</artifactSet>
 							<filters>
