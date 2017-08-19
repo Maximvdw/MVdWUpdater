@@ -188,7 +188,7 @@ public class MVdWUpdater extends JavaPlugin {
      * @throws InvalidCredentialsException
      *             Username or Password do not match
      */
-    public SpigotUser authenticate(String username, String password) throws InvalidCredentialsException, TwoFactorAuthenticationException {
+    public SpigotUser authenticate(String username, String password) throws InvalidCredentialsException, TwoFactorAuthenticationException, ConnectionFailedException {
         UserManager userManager = api.getUserManager();
         SpigotUser user = (SpigotUser) userManager.authenticate(username, password);
         return user;
@@ -207,7 +207,7 @@ public class MVdWUpdater extends JavaPlugin {
 	 * @throws InvalidCredentialsException
 	 *             Username or Password do not match
 	 */
-	public SpigotUser authenticate(String username, String password, String totpSecret) throws InvalidCredentialsException, TwoFactorAuthenticationException {
+	public SpigotUser authenticate(String username, String password, String totpSecret) throws InvalidCredentialsException, TwoFactorAuthenticationException, ConnectionFailedException {
 		UserManager userManager = api.getUserManager();
         if (totpSecret.equals("")) { totpSecret = null; }
 		SpigotUser user = (SpigotUser) userManager.authenticate(username, password,totpSecret);
