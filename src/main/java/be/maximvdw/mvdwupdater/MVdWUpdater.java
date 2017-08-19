@@ -278,16 +278,11 @@ public class MVdWUpdater extends JavaPlugin {
 	 */
 	public String getResourceVersionString(int resourceId) {
 		try {
-			HttpURLConnection con = (HttpURLConnection) new URL("https://api.spigotmc.org/legacy/update.php")
+			HttpURLConnection con = (HttpURLConnection) new URL("https://api.spigotmc.org/legacy/update.php?resource=" + resourceId)
 					.openConnection();
 			con.setRequestMethod("GET");
-			con.getOutputStream().write(
-					("?resource=" + resourceId)
-							.getBytes("UTF-8"));
 			String version = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
-			if (version.length() <= 7) {
-				return version;
-			}
+			return version;
 		} catch (Exception ex) {
 			SendConsole.info("Failed to check for a update on spigot.");
 		}
@@ -361,7 +356,7 @@ public class MVdWUpdater extends JavaPlugin {
 				List<Resource> resources = getPurchasedResources(user);
 				SendConsole.info("Purchased resources: " + resources.size());
 				for (Resource resource : resources) {
-					SendConsole.info("\t" + resource.getResourceName());
+					SendConsole.info("\t" + "[" + resource.getResourceId() + "] " + resource.getResourceName());
 				}
 			} catch (Exception ex) {
 				SendConsole.warning("Unable to fetch purchased resources!");
