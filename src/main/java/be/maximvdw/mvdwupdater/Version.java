@@ -10,7 +10,7 @@ import be.maximvdw.mvdwupdater.utils.NumberUtils;
  * @author Maxim Van de Wynckel (Maximvdw)
  * @version 1.0
  * @project BasePlugin
- * @site http://www.mvdw-software.be/
+ * @site http://www.mvdw-software.com/
  */
 public class Version implements Comparable<Version> {
     /**
@@ -45,11 +45,27 @@ public class Version implements Comparable<Version> {
             if (NumberUtils.isInteger(data[1])) {
                 minor = (short) Integer.parseInt(data[1]);
             }
-            if (data[2].contains("b"))
-                beta = true;
-            if (NumberUtils.isInteger(data[2].replace("b", ""))) {
-                release = (short) Integer.parseInt(data[2].replace("b", ""));
+            try {
+                if (data[2].contains("b"))
+                    beta = true;
+                if (data[2].contains("a"))
+                    alpha = true;
+                if (NumberUtils.isInteger(data[2].replace("b", ""))) {
+                    release = (short) Integer.parseInt(data[2].replace("b", ""));
+                }
+            }catch (Exception ex){
+
             }
+        } else if (data.length == 2) {
+            if (NumberUtils.isInteger(data[0])) {
+                major = (short) Integer.parseInt(data[0]);
+            }
+            if (major == 0)
+                alpha = true;
+            if (NumberUtils.isInteger(data[1])) {
+                minor = (short) Integer.parseInt(data[1]);
+            }
+            release = 0;
         }
     }
 
