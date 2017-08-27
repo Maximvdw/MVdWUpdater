@@ -65,7 +65,7 @@ public class MVdWUpdater extends JavaPlugin {
             SendConsole.warning("Unable to turn of HTMLUnit logging!");
         }
 
-        Map<String, String> cookies = new HashMap<>();
+        Map<String, String> cookies = null;
         try {
             // Load configuration
             new Configuration(this);
@@ -73,6 +73,7 @@ public class MVdWUpdater extends JavaPlugin {
             YamlStorage credentialStorage = loadCredentialsConfig();
             Object cookiesObj = credentialStorage.getConfig().get("cookies");
             if (cookiesObj != null) {
+                cookies = new HashMap<>();
                 ConfigurationSection section = credentialStorage.getConfig().getConfigurationSection("cookies");
                 for (String key : section.getKeys(false)) {
                     String value = section.getString(key);
