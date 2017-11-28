@@ -14,9 +14,9 @@ import be.maximvdw.mvdwupdater.utils.NumberUtils;
  */
 public class Version implements Comparable<Version> {
     /**
-     * Major minor and release
+     * Mayor minor and release
      */
-    private short major, minor, release;
+    private short mayor, minor, release;
     /**
      * Alpha or beta release
      */
@@ -32,40 +32,25 @@ public class Version implements Comparable<Version> {
     /**
      * Create version from string
      *
-     * @param version Version string
+     * @param version
+     *            Version string
      */
     public Version(String version) {
         String[] data = version.split("\\.");
         if (data.length == 3) {
             if (NumberUtils.isInteger(data[0])) {
-                major = (short) Integer.parseInt(data[0]);
+                mayor = (short) Integer.parseInt(data[0]);
             }
-            if (major == 0)
+            if (mayor == 0)
                 alpha = true;
             if (NumberUtils.isInteger(data[1])) {
                 minor = (short) Integer.parseInt(data[1]);
             }
-            try {
-                if (data[2].contains("b"))
-                    beta = true;
-                if (data[2].contains("a"))
-                    alpha = true;
-                if (NumberUtils.isInteger(data[2].replace("b", ""))) {
-                    release = (short) Integer.parseInt(data[2].replace("b", ""));
-                }
-            }catch (Exception ex){
-
+            if (data[2].contains("b"))
+                beta = true;
+            if (NumberUtils.isInteger(data[2].replace("b", ""))) {
+                release = (short) Integer.parseInt(data[2].replace("b", ""));
             }
-        } else if (data.length == 2) {
-            if (NumberUtils.isInteger(data[0])) {
-                major = (short) Integer.parseInt(data[0]);
-            }
-            if (major == 0)
-                alpha = true;
-            if (NumberUtils.isInteger(data[1])) {
-                minor = (short) Integer.parseInt(data[1]);
-            }
-            release = 0;
         }
     }
 
@@ -88,22 +73,23 @@ public class Version implements Comparable<Version> {
     }
 
     /**
-     * Get major version
+     * Get mayor version
      *
-     * @return Major
+     * @return Mayor
      */
-    public short getMajor() {
-        return major;
+    public short getMayor() {
+        return mayor;
     }
 
     /**
-     * Set major version
+     * Set mayor version
      *
-     * @param major Major
+     * @param mayor
+     *            Mayor
      * @return Version
      */
-    public Version setMajor(short major) {
-        this.major = major;
+    public Version setMayor(short mayor) {
+        this.mayor = mayor;
         return this;
     }
 
@@ -119,7 +105,8 @@ public class Version implements Comparable<Version> {
     /**
      * Set minor version
      *
-     * @param minor Minor
+     * @param minor
+     *            Minor
      * @return Version
      */
     public Version setMinor(short minor) {
@@ -139,7 +126,8 @@ public class Version implements Comparable<Version> {
     /**
      * Set release version
      *
-     * @param release Release
+     * @param release
+     *            Release
      * @return Version
      */
     public Version setRelease(short release) {
@@ -147,6 +135,7 @@ public class Version implements Comparable<Version> {
         return this;
     }
 
+    @Deprecated
     public int compare(Version otherVersion) {
         return compareTo(otherVersion);
     }
@@ -155,17 +144,26 @@ public class Version implements Comparable<Version> {
      * Version to string
      */
     public String toString() {
-        String version = major + "." + minor + "." + release;
+        String version = mayor + "." + minor + "." + release;
         if (isBeta())
             version += "b";
         return version;
     }
 
+    public boolean isNewerThan(Version version){
+        return compareTo(version) == -1;
+    }
+
+    public boolean isOlderThan(Version version){
+        return compareTo(version) == 1;
+    }
+
+
     @Override
     public int compareTo(Version otherVersion) {
-        if (otherVersion.getMajor() > this.getMajor()) {
+        if (otherVersion.getMayor() > this.getMayor()) {
             return 1;
-        } else if (otherVersion.getMajor() < this.getMajor()) {
+        } else if (otherVersion.getMayor() < this.getMayor()) {
             return -1;
         } else {
             if (otherVersion.getMinor() > this.getMinor()) {

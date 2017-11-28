@@ -198,8 +198,7 @@ public class MVdWUpdater extends JavaPlugin {
      */
     public SpigotUser authenticate(String username, String password) throws InvalidCredentialsException, TwoFactorAuthenticationException, ConnectionFailedException {
         UserManager userManager = api.getUserManager();
-        SpigotUser user = (SpigotUser) userManager.authenticate(username, password);
-        return user;
+        return (SpigotUser) userManager.authenticate(username, password);
     }
 
     /**
@@ -216,8 +215,7 @@ public class MVdWUpdater extends JavaPlugin {
         if (totpSecret.equals("")) {
             totpSecret = null;
         }
-        SpigotUser user = (SpigotUser) userManager.authenticate(username, password, totpSecret);
-        return user;
+        return (SpigotUser) userManager.authenticate(username, password, totpSecret);
     }
 
     /**
@@ -325,8 +323,7 @@ public class MVdWUpdater extends JavaPlugin {
      * @return credentials config
      */
     private YamlStorage loadCredentialsConfig() {
-        YamlStorage credentialStorage = new YamlStorage(this, "", "credentials", 2, loadDefaultCredentialConfig());
-        return credentialStorage;
+        return new YamlStorage(this, "", "credentials", 2, loadDefaultCredentialConfig());
     }
 
     /**
@@ -348,7 +345,6 @@ public class MVdWUpdater extends JavaPlugin {
                 credentialStorage.getConfig().set("cookies", user.getCookies());
                 credentialStorage.getConfig().save(credentialStorage.getConfigFile());
                 SendConsole.info("Saved the credentials.yml file!");
-
             } else {
                 if (cookiesObj != null) {
                     Map<String, String> cookies = new HashMap<String, String>();
@@ -377,6 +373,8 @@ public class MVdWUpdater extends JavaPlugin {
             } catch (Exception ex) {
                 SendConsole.warning("Unable to fetch purchased resources!");
             }
+        }else{
+            SendConsole.warning("User is not logged in!");
         }
     }
 
