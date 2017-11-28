@@ -88,12 +88,14 @@ public class MVdWUpdater extends JavaPlugin {
         SendConsole.info("This can take a while!");
         try {
             api = new SpigotSiteCore(cookies); // Initialize spigot site API
+            SendConsole.info("Spigot Site Core initialized!");
+            loginUser();
         } catch (Exception ex) {
             SendConsole.severe("Unable to load Spigot Core!");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
-        SendConsole.info("Spigot Site Core initialized!");
+
     }
 
     /**
