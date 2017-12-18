@@ -1,16 +1,29 @@
 package be.maximvdw.mvdwupdater.utils;
 
 
+import be.maximvdw.mvdwupdater.MVdWUpdater;
 import be.maximvdw.mvdwupdater.ui.SendConsole;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 
 public class LibDownloader {
-    private static final Class[] parameters = new Class[]{URL.class};
+    private static final Method ADD_URL_METHOD;
+
+    static {
+        Method addUrlMethod = null;
+        try {
+            addUrlMethod = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+            addUrlMethod.setAccessible(true);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        ADD_URL_METHOD = addUrlMethod;
+    }
 
     public enum Library {
         HTMMLUNIT("http://repo.mvdw-software.be/content/groups/public/com/gargoylesoftware/HTMLUnit/2.15/HTMLUnit-2.15-OSGi.jar",
@@ -100,17 +113,17 @@ public class LibDownloader {
     }
 
     public static void addURL(URL u) throws IOException {
+        // get the classloader to load into
+        ClassLoader classLoader = MVdWUpdater.class.getClassLoader();
 
-        URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-        Class sysclass = URLClassLoader.class;
-
-        try {
-            Method method = sysclass.getDeclaredMethod("addURL", parameters);
-            method.setAccessible(true);
-            method.invoke(sysloader, new Object[]{u});
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new IOException("Error, could not add URL to system classloader");
+        if (classLoader instanceof URLClassLoader) {
+            try {
+                ADD_URL_METHOD.invoke(classLoader, u);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException("Unable to invoke URLClassLoader#addURL", e);
+            }
+        } else {
+            throw new RuntimeException("Unknown classloader: " + classLoader.getClass());
         }
 
     }

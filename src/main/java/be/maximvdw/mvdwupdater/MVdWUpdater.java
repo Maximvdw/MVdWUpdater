@@ -1,5 +1,29 @@
 package be.maximvdw.mvdwupdater;
 
+import be.maximvdw.mvdwupdater.config.Configuration;
+import be.maximvdw.mvdwupdater.config.YamlBuilder;
+import be.maximvdw.mvdwupdater.config.YamlStorage;
+import be.maximvdw.mvdwupdater.ui.SendConsole;
+import be.maximvdw.mvdwupdater.utils.LibDownloader;
+import be.maximvdw.spigotsite.SpigotSiteCore;
+import be.maximvdw.spigotsite.api.SpigotSiteAPI;
+import be.maximvdw.spigotsite.api.exceptions.ConnectionFailedException;
+import be.maximvdw.spigotsite.api.resource.Resource;
+import be.maximvdw.spigotsite.api.resource.ResourceManager;
+import be.maximvdw.spigotsite.api.user.User;
+import be.maximvdw.spigotsite.api.user.UserManager;
+import be.maximvdw.spigotsite.api.user.exceptions.InvalidCredentialsException;
+import be.maximvdw.spigotsite.api.user.exceptions.TwoFactorAuthenticationException;
+import be.maximvdw.spigotsite.user.SpigotUser;
+import org.apache.commons.logging.LogFactory;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.plugin.InvalidDescriptionException;
+import org.bukkit.plugin.InvalidPluginException;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.UnknownDependencyException;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -12,31 +36,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-
-import be.maximvdw.mvdwupdater.utils.LibDownloader;
-import be.maximvdw.spigotsite.api.user.exceptions.TwoFactorAuthenticationException;
-import org.apache.commons.logging.LogFactory;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.plugin.InvalidDescriptionException;
-import org.bukkit.plugin.InvalidPluginException;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.UnknownDependencyException;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import be.maximvdw.mvdwupdater.config.Configuration;
-import be.maximvdw.mvdwupdater.config.YamlBuilder;
-import be.maximvdw.mvdwupdater.config.YamlStorage;
-import be.maximvdw.mvdwupdater.ui.SendConsole;
-import be.maximvdw.spigotsite.SpigotSiteCore;
-import be.maximvdw.spigotsite.api.SpigotSiteAPI;
-import be.maximvdw.spigotsite.api.exceptions.ConnectionFailedException;
-import be.maximvdw.spigotsite.api.resource.Resource;
-import be.maximvdw.spigotsite.api.resource.ResourceManager;
-import be.maximvdw.spigotsite.api.user.User;
-import be.maximvdw.spigotsite.api.user.UserManager;
-import be.maximvdw.spigotsite.api.user.exceptions.InvalidCredentialsException;
-import be.maximvdw.spigotsite.user.SpigotUser;
 
 public class MVdWUpdater extends JavaPlugin {
     private SpigotSiteAPI api = null;
