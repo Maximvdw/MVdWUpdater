@@ -1,13 +1,13 @@
 ##
 # MVdWUpdater Plugin
 #
-# @copyright MVdW Software 2014-2018
+# @copyright MVdW Software 2014-2019
 # @author Maxim Van de Wynckel (Maximvdw)
 ##
 
 name: MVdWUpdater
-version: 1.6.0
+version: 1.7.1
 description: SpigotMC MVdW plugin updater
 author: Maximvdw
-website: http://www.mvdw-software.com/
+website: https://www.mvdw-software.com/
 main: be.maximvdw.mvdwupdater.MVdWUpdater
