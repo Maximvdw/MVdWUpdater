@@ -14,9 +14,9 @@ import be.maximvdw.mvdwupdater.utils.NumberUtils;
  */
 public class Version implements Comparable<Version> {
     /**
-     * Mayor minor and release
+     * Major minor and release
      */
-    private short mayor, minor, release;
+    private short major, minor, release;
     /**
      * Alpha or beta release
      */
@@ -39,9 +39,9 @@ public class Version implements Comparable<Version> {
         String[] data = version.split("\\.");
         if (data.length == 3) {
             if (NumberUtils.isInteger(data[0])) {
-                mayor = (short) Integer.parseInt(data[0]);
+                major = (short) Integer.parseInt(data[0]);
             }
-            if (mayor == 0)
+            if (major == 0)
                 alpha = true;
             if (NumberUtils.isInteger(data[1])) {
                 minor = (short) Integer.parseInt(data[1]);
@@ -77,8 +77,30 @@ public class Version implements Comparable<Version> {
      *
      * @return Mayor
      */
+    public short getMajor() {
+        return major;
+    }
+
+    /**
+     * Set mayor version
+     *
+     * @param major
+     *            Mayor
+     * @return Version
+     */
+    public Version setMajor(short major) {
+        this.major = major;
+        return this;
+    }
+
+    /**
+     * Get mayor version
+     *
+     * @return Mayor
+     */
+    @Deprecated
     public short getMayor() {
-        return mayor;
+        return major;
     }
 
     /**
@@ -88,8 +110,9 @@ public class Version implements Comparable<Version> {
      *            Mayor
      * @return Version
      */
+    @Deprecated
     public Version setMayor(short mayor) {
-        this.mayor = mayor;
+        this.major = mayor;
         return this;
     }
 
@@ -144,7 +167,7 @@ public class Version implements Comparable<Version> {
      * Version to string
      */
     public String toString() {
-        String version = mayor + "." + minor + "." + release;
+        String version = major + "." + minor + "." + release;
         if (isBeta())
             version += "b";
         return version;
@@ -161,9 +184,9 @@ public class Version implements Comparable<Version> {
 
     @Override
     public int compareTo(Version otherVersion) {
-        if (otherVersion.getMayor() > this.getMayor()) {
+        if (otherVersion.getMajor() > this.getMajor()) {
             return 1;
-        } else if (otherVersion.getMayor() < this.getMayor()) {
+        } else if (otherVersion.getMajor() < this.getMajor()) {
             return -1;
         } else {
             if (otherVersion.getMinor() > this.getMinor()) {
